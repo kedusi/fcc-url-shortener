@@ -42,6 +42,21 @@ var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+/*
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://kedusi:<password>@fcc.kcis9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
+*/
+
 app.use(bodyParser.urlencoded({extended: "false"}));
 app.use(bodyParser.json());
 
