@@ -38,4 +38,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var mongodb = require('mongodb');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({extended: "false"}));
+app.use(bodyParser.json());
+
 module.exports = app;
