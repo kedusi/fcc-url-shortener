@@ -38,6 +38,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+require('dotenv').config();
 var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
@@ -59,5 +60,28 @@ client.connect(err => {
 
 app.use(bodyParser.urlencoded({extended: "false"}));
 app.use(bodyParser.json());
+
+const schema = mongoose.Schema;
+const urlSchema = new schema({
+  url: {
+    type: String,
+    require: true
+  },
+  shortUrl: {
+    type: Number,
+    require: true
+  }
+});
+
+let URL = mongoose.model("URL", urlSchema);
+
+const url = new URL({
+  url: "www.yakko.wakko.dot.com",
+  shortUrl: 1
+});
+
+url.save(function(err) {
+  if(err) return console.error(err);
+});
 
 module.exports = app;
