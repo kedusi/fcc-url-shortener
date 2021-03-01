@@ -75,13 +75,26 @@ const urlSchema = new schema({
 
 let URL = mongoose.model("URL", urlSchema);
 
-const url = new URL({
-  url: "www.yakko.wakko.dot.com",
-  shortUrl: 1
-});
+const createUrl = function(url) {
 
-url.save(function(err) {
-  if(err) return console.error(err);
-});
+  console.log('create new url');
+
+  const getNextShortUrl = function() {
+    console.log(URL.findOne().sort("-shortUrl").get("shortUrl"));
+    return (URL.findOne().sort("-shortUrl").get('shortUrl') + 1) || 0;
+  };
+
+  const newUrl = new URL({
+    url: url,
+    shortUrl: getNextShortUrl()
+  });
+  
+  newUrl.save(function(err) {
+    if(err) return console.error(err);
+  });
+}
+
+createUrl("hello.world.com/i/want/to/be/a/programmer");
+createUrl("www.yakko.wakko.dot.com");
 
 module.exports = app;
