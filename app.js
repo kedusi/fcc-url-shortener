@@ -76,12 +76,15 @@ const urlSchema = new schema({
 let URL = mongoose.model("URL", urlSchema);
 
 const createUrl = function(url) {
-
-  console.log('create new url');
+  console.log("=============");
+  console.log(url);
 
   const getNextShortUrl = function() {
-    console.log(URL.findOne().sort("-shortUrl").get("shortUrl"));
-    return (URL.findOne().sort("-shortUrl").get('shortUrl') + 1) || 0;
+    return URL.findOne().sort("-shortUrl").exec((err, doc) => {
+      if(err) console.log(err);
+      console.log(doc.get('shortUrl'));
+      return (doc.get('shortUrl') + 1) || 0;
+    });
   };
 
   const newUrl = new URL({
@@ -89,12 +92,22 @@ const createUrl = function(url) {
     shortUrl: getNextShortUrl()
   });
   
-  newUrl.save(function(err) {
-    if(err) return console.error(err);
-  });
+  // newUrl.save(function(err) {
+  //   if(err) console.error(err);
+  // });
 }
 
-createUrl("hello.world.com/i/want/to/be/a/programmer");
-createUrl("www.yakko.wakko.dot.com");
+let newTest = new URL({
+  url: "www.dot.com",
+  shortUrl: 3
+});
+newTest.save(err => {
+  if(err) console.error(err);
+  else console.log('saved');
+});
 
+URL.findOne().sort('-shortUrl').exec(function(err, docs) {
+  if(err) console.error(err);
+  console.log(docs.shortUrl, docs.url);
+});
 module.exports = app;
