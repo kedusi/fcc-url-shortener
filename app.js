@@ -45,19 +45,6 @@ var bodyParser = require('body-parser');
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-/*
-
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://kedusi:<password>@fcc.kcis9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
-
-*/
-
 app.use(bodyParser.urlencoded({extended: "false"}));
 app.use(bodyParser.json());
 
@@ -75,47 +62,17 @@ const urlSchema = new schema({
 
 let URL = mongoose.model("URL", urlSchema);
 
-async function createUrl(url) {
-  console.log("=============");
-  console.log(url);
+function createUrl(url) {
   
   URL.findOne().sort("-shortUrl").exec((err, doc) => {
     if(err) console.error(err);
     
-    URL.create({
+    const newUrl = new URL({
       url: url,
-      shortUrl: doc ? doc.get('shortUrl') + 1 : 0
-    },
-    (err, doc) => {
-      if(err) console.error(err);
-      console.log(doc.shortUrl);
-    });    
+    });
+    newUrl.shortUrl = doc ? doc.get('shortUrl') + 1 : 0
+    newUrl.save();
   });
- 
-
-  // console.log("newUrl");
-  // console.log("url: " + newUrl.get('url'));
-  // console.log("shortUrl: " + newUrl.get('shortUrl'));
-  
-  // newUrl.save(function(err) {
-  //   if(err) console.error(err);
-  // });
 }
-
-createUrl('www.happy.com');
-createUrl('www.hello.world.com');
-
-// let newTest = new URL({
-//   url: "www.dot.com",
-//   shortUrl: 7
-// });
-// newTest.save((err) => {
-//   if(err) console.error(err);
-//   else URL.findOne().sort('-shortUrl').exec(function(err, docs) {
-//     if(err) console.error(err);
-//     console.log(docs.shortUrl, docs.url);
-//   });
-// });
-
 
 module.exports = app;
