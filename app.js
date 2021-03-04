@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var shortenerRouter = require('./routes/shorturl');
 
 var app = express();
 
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', shortenerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,7 +64,7 @@ const urlSchema = new schema({
 
 let URL = mongoose.model("URL", urlSchema);
 
-function createUrl(url) {
+exports.createUrl = function createUrl(url) {
   
   URL.findOne().sort("-shortUrl").exec((err, doc) => {
     if(err) console.error(err);
@@ -72,6 +74,12 @@ function createUrl(url) {
     });
     newUrl.shortUrl = doc ? doc.get('shortUrl') + 1 : 0
     newUrl.save();
+  });
+
+  URL.findOne().sort('-shortUrl').exec((err, doc) => {
+    if(err) console.error(err);
+
+    return {original_url: doc.url, short_url: doc.shortUrl};
   });
 }
 
