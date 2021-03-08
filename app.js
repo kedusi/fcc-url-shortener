@@ -64,23 +64,4 @@ const urlSchema = new schema({
 
 let URL = mongoose.model("URL", urlSchema);
 
-exports.createUrl = function createUrl(url) {
-  
-  URL.findOne().sort("-shortUrl").exec((err, doc) => {
-    if(err) console.error(err);
-    
-    const newUrl = new URL({
-      url: url,
-    });
-    newUrl.shortUrl = doc ? doc.get('shortUrl') + 1 : 0
-    newUrl.save();
-  });
-
-  URL.findOne().sort('-shortUrl').exec((err, doc) => {
-    if(err) console.error(err);
-
-    return {original_url: doc.url, short_url: doc.shortUrl};
-  });
-}
-
 module.exports = app;
